@@ -1,0 +1,20 @@
+import = [
+  "~/.config/alacrity/themes/github_light.toml",
+]
+
+live_config_reload = true
+
+[window]
+decorations = "Transparent"
+padding = { x = 15, y = 40 }
+dynamic_padding = true
+
+[font]
+normal = { family = "MesloLGS NF", style = "Regular" }
+size = 18
+
+[cursor]
+style = { shape = "block", blinking = "on" }
+blink_interval = 500
+
+
