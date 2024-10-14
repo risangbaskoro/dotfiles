@@ -1,1 +1,5 @@
+# Obsidian when I want to edit markdowns visually
 .obsidian
+
+# Alacritty current theme, which will be changed frequently
+.config/alacritty/current-theme.toml
