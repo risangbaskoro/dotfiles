@@ -5,9 +5,11 @@ import = [
 live_config_reload = true
 
 [window]
-decorations = "Transparent"
+decorations = "Transparent"  # macOS
 padding = { x = 15, y = 40 }
 dynamic_padding = true
+opacity = 0.7
+blur = true  # macOS
 
 [font]
 normal = { family = "MesloLGS Nerd Font Mono", style = "Regular" }
