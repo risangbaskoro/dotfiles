@@ -14,6 +14,15 @@ if [ ! -d "$ZINIT_HOME" ]; then
 	git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 fi
 
+# Tmux Plugin Manager (tpm)
+TPM_HOME="${XDG_DATA_HOME:-${HOME}}/.tmux/plugins/tpm"
+
+# Check if tpm exists
+if [ ! -d "$TPM_HOME" ]; then
+	mkdir -p "$(dirname $TPM_HOME)"
+	git clone https://github.com/tmux-plugins/tpm.git "$TPM_HOME"
+fi
+
 # Source Zinit
 source "${ZINIT_HOME}/zinit.zsh"
 
