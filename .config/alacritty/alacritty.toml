@@ -14,7 +14,7 @@ normal = { family = "MesloLGS Nerd Font Mono", style = "Regular" }
 size = 18
 
 [cursor]
-style = { shape = "block", blinking = "on" }
+style = { shape = "block", blinking = "always" }
 blink_interval = 500
 
 
