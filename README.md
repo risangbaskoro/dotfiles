@@ -69,12 +69,12 @@ If it outputs a directory, then you are good to go.
 
 To install `nix-darwin`:
 ```shell
-nix run nix-darwin --extra-experimental-features "nix-command flakes" -- switch --flake ~/nix#laptop
+nix run nix-darwin --extra-experimental-features "nix-command flakes" -- switch --flake ~/dotfiles/nix#laptop
 ```
 
 To apply changes to your system:
 ```shell
-darwin rebuild switch --flake ~/nix#laptop
+darwin rebuild switch --flake ~/dotfiles/nix#laptop
 ```
 
 > [!warning]
