@@ -1,5 +1,5 @@
 {
-  description = "Personal Darwin system flake";
+  description = "Personal Darwin Intel system flake";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -43,7 +43,7 @@
 	    "mas"
 	  ];
 	  casks = [
-	    
+	    "zotero"
 	  ];
 	  onActivation.cleanup = "zap";
 	  onActivation.autoUpdate = true;
