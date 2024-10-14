@@ -23,6 +23,7 @@
 	  pkgs.tree
 	  pkgs.fzf
 	  pkgs.stow
+	  pkgs.delta
 	  pkgs.neovim
 	  pkgs.tmux
 	  pkgs.gnupg
