@@ -82,7 +82,7 @@ setopt autocd
 # Aliases
 alias zshconfig='nvim ~/.zshrc'
 alias restart='exec zsh'
-alias als='alias | grep --color=always'
+alias als='alias | fzf --ansi --layout=reverse --border --height 50%'
 alias ls='ls --color'
 alias c='clear'
 alias vim=nvim
