@@ -55,6 +55,9 @@ bindkey "^[[1;9C" end-of-line
 bindkey "^[[3;10~" backward-kill-word
 bindkey "^[[A" history-search-backward
 bindkey "^[[B" history-search-forward
+# Set bash word style to treat dir limiter as word
+autoload -U select-word-style
+select-word-style bash
 
 # History
 HISTFILE=~/.zsh_history
