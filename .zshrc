@@ -79,13 +79,20 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 # Auto change directory (cd)
 setopt autocd
 
+# Default Editor
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='nvim'
+fi
+
 # Aliases
-alias zshconfig='nvim ~/.zshrc'
+alias zshconfig='${EDITOR} ~/.zshrc'
 alias restart='exec zsh'
 alias als='alias | fzf --ansi --layout=reverse --border --height 50%'
 alias ls='ls --color'
 alias c='clear'
-alias vim=nvim
 
 # Alias to change Alacritty theme
 alias alatheme="ls ~/.config/alacritty/themes | fzf --ansi --layout=reverse --border --height 50% | xargs -I {} ln -sf ~/.config/alacritty/themes/{} ~/.config/alacritty/current-theme.toml && echo '@@@' >> ~/.config/alacritty/alacritty.toml && sed '/@@@/d' ~/.config/alacritty/alacritty.toml > ~/.config/alacritty/alacritty.tmp && mv ~/.config/alacritty/alacritty.tmp ~/.config/alacritty/alacritty.toml"
