@@ -3,3 +3,6 @@
 
 # Alacritty current theme, which will be changed frequently
 .config/alacritty/current-theme.toml
+
+# macOS DS_Store
+*/.DS_Store
