@@ -29,6 +29,7 @@
             pkgs.gnupg
             pkgs.pinentry_mac
             pkgs.gh
+            pkgs.librespeed-cli
 
             # GUI Apps
             pkgs.alacritty
