@@ -79,6 +79,37 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 # Auto change directory (cd)
 setopt autocd
 
+
+# "take" command
+# Implementing a trick from a blog post.
+# See https://batsov.com/articles/2022/09/16/oh-my-zsh-fun-with-take/
+# ----------------------------------------
+
+# For directories
+function mkcd takedir() {
+  mkdir -p $@ && cd ${@:$#}
+}
+
+# For git urls
+function takegit() {
+  git clone "$1"
+  cd "$(basename ${1%%.git})"
+}
+
+# The actual "take" command
+# If it is a git url, it will clone the repository and cd to the directory
+# else, create a directory and or cd to the directory
+function take() {
+  if [[ $1 =~ ^([A-Za-z0-9]\+@|https?|git|ssh|ftps?|rsync).*\.git/?$ ]]; then
+    takegit "$1"
+  else
+    takedir "$@"
+  fi
+}
+
+# ----------------------------------------
+
+
 # Default Editor
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
