@@ -28,6 +28,7 @@
             pkgs.ripgrep
             pkgs.tmux
             pkgs.gnupg
+            pkgs.cmake
             pkgs.pinentry_mac
             pkgs.gh
             pkgs.librespeed-cli
