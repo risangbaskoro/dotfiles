@@ -33,6 +33,7 @@
             pkgs.pinentry_mac
             pkgs.gh
             pkgs.librespeed-cli
+            pkgs.python3
 
             # GUI Apps
             pkgs.alacritty
