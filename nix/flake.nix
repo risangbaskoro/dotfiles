@@ -29,6 +29,7 @@
             pkgs.tmux
             pkgs.gnupg
             pkgs.cmake
+            pkgs.conan
             pkgs.pinentry_mac
             pkgs.gh
             pkgs.librespeed-cli
