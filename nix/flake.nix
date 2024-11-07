@@ -25,6 +25,7 @@
             pkgs.stow
             pkgs.delta
             pkgs.neovim
+            pkgs.ripgrep
             pkgs.tmux
             pkgs.gnupg
             pkgs.pinentry_mac
