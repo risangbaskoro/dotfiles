@@ -126,6 +126,11 @@ alias ls='ls --color'
 alias c='clear'
 alias dotfiles='cd ~/dotfiles'
 
+# Check if OS is Darwin (macOS)
+if [[ $(uname) == "Darwin" ]]; then
+  alias safari='open /Applications/Safari.app'
+fi
+
 # Alias to change Alacritty theme
 alias alatheme="ls ~/.config/alacritty/themes | fzf --ansi --layout=reverse --border --height 50% | xargs -I {} ln -sf ~/.config/alacritty/themes/{} ~/.config/alacritty/current-theme.toml && echo '@@@' >> ~/.config/alacritty/alacritty.toml && sed '/@@@/d' ~/.config/alacritty/alacritty.toml > ~/.config/alacritty/alacritty.tmp && mv ~/.config/alacritty/alacritty.tmp ~/.config/alacritty/alacritty.toml"
 
