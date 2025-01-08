@@ -120,6 +120,7 @@ fi
 
 # Aliases
 alias zshconfig='${EDITOR} ~/.zshrc'
+alias alacrittyconfig='${EDITOR} ~/.config/alacritty/alacritty.toml'
 alias restart='exec zsh'
 alias als='alias | fzf --ansi --layout=reverse --border --height 50%'
 alias ls='ls --color'
@@ -129,6 +130,7 @@ alias dotfiles='cd ~/dotfiles'
 # Check if OS is Darwin (macOS)
 if [[ $(uname) == "Darwin" ]]; then
   alias safari='open /Applications/Safari.app'
+  alias zotero='open /Applications/Zotero.app'
 fi
 
 # Alias to change Alacritty theme
