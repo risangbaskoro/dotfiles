@@ -120,6 +120,7 @@ fi
 
 # Aliases
 alias zshconfig='${EDITOR} ~/.zshrc'
+alias bashconfig='${EDITOR} ~/.bashrc'
 alias alacrittyconfig='${EDITOR} ~/.config/alacritty/alacritty.toml'
 alias restart='exec zsh'
 alias als='alias | fzf --ansi --layout=reverse --border --height 50%'
