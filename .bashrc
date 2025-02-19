@@ -33,12 +33,6 @@ else
 fi
 
 # Aliases
-alias zshconfig='${EDITOR} ~/.zshrc'
-alias bashconfig='${EDITOR} ~/.bashrc'
-alias alacrittyconfig='${EDITOR} ~/.config/alacritty/alacritty.toml'
-alias restart='exec bash'
-alias als='alias | fzf --ansi --layout=reverse --border --height 50%'
-alias ls='ls --color'
-alias c='clear'
-alias dotfiles='cd ~/dotfiles'
-
+if [ -f $HOME/.shell_aliases ]; then
+  source $HOME/.shell_aliases
+fi

@@ -1,9 +1,9 @@
 # Common
 alias zshconfig='${EDITOR} ~/.zshrc'
-alias zshalias='${EDITOR} ~/.zsh_aliases'
+alias aliases='${EDITOR} ~/.shell_aliases'
 alias bashconfig='${EDITOR} ~/.bashrc'
 alias alacrittyconfig='${EDITOR} ~/.config/alacritty/alacritty.toml'
-alias restart='exec zsh'
+alias restart='exec $SHELL'
 alias als='alias | fzf --ansi --layout=reverse --border --height 50%'
 alias ls='ls --color'
 alias ll='ls --color -lah'

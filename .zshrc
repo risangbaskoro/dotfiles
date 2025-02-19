@@ -119,8 +119,8 @@ else
 fi
 
 # Aliases
-if [ -f $HOME/.zsh_aliases ]; then
-  source $HOME/.zsh_aliases
+if [ -f $HOME/.shell_aliases ]; then
+  source $HOME/.shell_aliases
 fi
 
 # Shell integrations
