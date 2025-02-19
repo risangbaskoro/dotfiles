@@ -17,4 +17,7 @@ _darcs
 .+~          # emacs backup files
 \#.*\#       # emacs autosave files
 
+# GitHub CLI
+^/.config/gh
+
 ^/COPYING

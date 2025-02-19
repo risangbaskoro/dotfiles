@@ -7,5 +7,8 @@
 # Neovim (it has it's own repository)
 .config/nvim
 
+# GitHub CLI
+.config/gh
+
 # macOS DS_Store
 */.DS_Store
