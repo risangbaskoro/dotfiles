@@ -36,6 +36,8 @@ bash ~/dotfiles/install.sh
 > For each warning that `stow` throws, create a backup for those files.
 > 
 > For example, if `.bashrc` already exists in your `$HOME` directory, you can rename it to `.bashrc.backup` using the `mv` command: `mv ~/.bashrc ~/.bashrc.backup`
+>
+> See: https://www.gnu.org/software/stow/manual/stow.html#Conflicts
 
 Done. Your shell, terminal, and all other configs are there.
 
