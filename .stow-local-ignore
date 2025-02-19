@@ -1,23 +1,17 @@
-RCS
-.+,v
-
-CVS
-\.\#.+       # CVS conflict files / emacs lock files
-\.cvsignore
-
-\.svn
-_darcs
-\.hg
-
+# Git
 \.git
 \.gitignore
 \.gitmodules
+
+# Obsidian
 \.obsidian
 
-.+~          # emacs backup files
-\#.*\#       # emacs autosave files
+# Dotfiles Installation Script
+^/install.sh
 
 # GitHub CLI
 ^/.config/gh
 
+^/README.*
+^/LICENSE*
 ^/COPYING
