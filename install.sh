@@ -1,5 +1,6 @@
 #!/bin/bash
 
+CURRENT_DIR=$(pwd)
 DOTFILES_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 STOW_VERSION="2.4.1"
 STOW_URL="https://ftp.gnu.org/gnu/stow/stow-$STOW_VERSION.tar.gz"
@@ -22,8 +23,8 @@ if ! command -v stow >/dev/null 2>&1; then
     cd "stow-$STOW_VERSION" && ./configure && make install
 
     echo "Cleanup..."
-    rm "$STOW_TARBALL"
-    rm -rf "stow-$STOW_VERSION"
+    rm "$CURRENT_DIR/$STOW_TARBALL"
+    rm -rf "$CURRENT_DIR/stow-$STOW_VERSION"
 
     echo
     echo "GNU Stow is installed."
