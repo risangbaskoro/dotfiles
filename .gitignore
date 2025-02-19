@@ -4,11 +4,10 @@
 # Alacritty current theme, which will be changed frequently
 .config/alacritty/current-theme.toml
 
-# Neovim (it has it's own repository)
-.config/nvim
-
-# GitHub CLI
-.config/gh
+.config
+# All in .config except
+!.config/alacritty
+!.config/tmux
 
 # macOS DS_Store
 */.DS_Store
