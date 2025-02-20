@@ -7,17 +7,22 @@ if [ ! -d "$TPM_HOME" ]; then
 	git clone https://github.com/tmux-plugins/tpm.git "$TPM_HOME"
 fi
 
-# Enable colors
-export CLICOLOR=1
-export LSCOLORS=ExFxCxDxBxegedabagacad
-
-# Git branch function
+# Function to get the current Git branch name
 parse_git_branch() {
-  git branch 2>/dev/null | grep '*' | sed 's/* //'
+  git branch 2>/dev/null | sed -n '/^\*/s/^\* //p'
 }
 
+# Color definitions (using ANSI escape sequences)
+RED='\[\033[0;31m\]'
+GREEN='\[\033[0;32m\]'
+YELLOW='\[\033[0;33m\]'
+BLUE='\[\033[0;34m\]'
+PURPLE='\[\033[0;35m\]'
+CYAN='\[\033[0;36m\]'
+RESET='\[\033[0m\]'
+
 # Set custom PS1
-export PS1="\[\e[34m\] \[\e[36m\]\w \[\e[32m\] \$(parse_git_branch) \[\e[32m\]\n❯ "
+export PS1="\n${RED}$(whoami) ${BLUE}\w$(printf '\t')${GREEN}\$(parse_git_branch)${RESET}\n${GREEN}❯${RESET} "
 
 # History
 # don't put duplicate lines in the history. See bash(1) for more options
