@@ -3,7 +3,7 @@ alias zshconfig='${EDITOR} ~/.zshrc'
 alias aliases='${EDITOR} ~/.shell_aliases'
 alias bashconfig='${EDITOR} ~/.bashrc'
 alias alacrittyconfig='${EDITOR} ~/.config/alacritty/alacritty.toml'
-alias restart='exec $SHELL'
+alias restart='exec $(basename $SHELL)'
 alias als='alias | fzf --ansi --layout=reverse --border --height 50%'
 alias ls='ls --color'
 alias ll='ls --color -lah'
@@ -19,3 +19,5 @@ fi
 # Change Alacritty theme
 alias alatheme="ls ~/.config/alacritty/themes | fzf --ansi --layout=reverse --border --height 50% | xargs -I {} ln -sf ~/.config/alacritty/themes/{} ~/.config/alacritty/current-theme.toml && echo '@@@' >> ~/.config/alacritty/alacritty.toml && sed '/@@@/d' ~/.config/alacritty/alacritty.toml > ~/.config/alacritty/alacritty.tmp && mv ~/.config/alacritty/alacritty.tmp ~/.config/alacritty/alacritty.toml"
 
+
+RESTART="exec $(basename $SHELL)"
