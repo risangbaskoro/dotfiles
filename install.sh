@@ -22,11 +22,17 @@ function symlink {
     fi
 
     echo "Creating symlink: ${SOURCE} -> ${TARGET}..."
-    ln -sF "${SOURCE}" "${TARGET}"
+    ln -srF "${SOURCE}" "${TARGET}"
     echo "Created symlink: ${SOURCE} -> ${TARGET}."
 }
 
 # Just making sure
 mkdir -p ~/.config
 
+# Symlinks
+symlink .hushlogin
 
+symlink .bashrc
+
+symlink .zshrc
+symlink .p10k.zsh
