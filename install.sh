@@ -1,52 +1,32 @@
 #!/bin/bash
 
-CURRENT_DIR=$(pwd)
-DOTFILES_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-STOW_VERSION="2.4.1"
-STOW_URL="https://ftp.gnu.org/gnu/stow/stow-$STOW_VERSION.tar.gz"
-STOW_TARBALL=$(basename "$STOW_URL")
-
-if ! command -v stow >/dev/null 2>&1; then
-    echo "GNU Stow is not installed. Trying to install..."
-    echo
-
-    # Download stow from GNU's FTP server
-    echo "Downloading GNU Stow..."
-    curl -fsSLO "$STOW_URL"
-
-    echo "Extracting GNU Stow..."
-    # Extract Stow tar and remove the tar
-    tar -xzf "$STOW_TARBALL"
-    
-    # Install Stow
-    echo "Installing GNU Stow..."
-    cd "stow-$STOW_VERSION" && ./configure && make install
-
-    echo "Cleanup..."
-    rm "$CURRENT_DIR/$STOW_TARBALL"
-    rm -rf "$CURRENT_DIR/stow-$STOW_VERSION"
+function symlink {
+    SOURCE="${PWD}/$1"
+    TARGET="${HOME}/$1"
 
     echo
-    echo "GNU Stow is installed."
-    echo
-fi
+    if [ -f ${TARGET} ]; then
+        read -p "File ${TARGET} exists. Do you want to create a backup? [Y/n] " choice
+        if [[ "${choice^^}" == N ]]; then
+            echo "Skipping ${SOURCE}"
+            return
+        else
+            echo "Backing up: ${SOURCE} -> ${TARGET}.bak..."
+            mv "${TARGET}" "$TARGET.bak"
+        fi
+    fi
 
-if command -v stow >/dev/null 2>&1; then
-    echo "Symlinking files in $DOTFILES_DIR"
-    echo "This will run the following command:"
-    echo
-    echo "> stow $DOTFILES_DIR --target=$HOME"
+    if [ ! -d $(dirname ${TARGET}) ]; then
+        echo "Creating directory $(dirname ${TARGET})..."
+        mkdir -p $(dirname ${TARGET})
+    fi
 
-    cd "$DOTFILES_DIR" && stow . --target="$HOME" && cd
+    echo "Creating symlink: ${SOURCE} -> ${TARGET}..."
+    ln -sF "${SOURCE}" "${TARGET}"
+    echo "Created symlink: ${SOURCE} -> ${TARGET}."
+}
 
-    echo
-    echo "Done!"
-    echo
-    echo "Restarting shell..."
-    echo
-    exec $SHELL
-else
-    echo "GNU Stow is still not installed."
-    echo
-    echo "ABORTING"
-fi
+# Just making sure
+mkdir -p ~/.config
+
+
