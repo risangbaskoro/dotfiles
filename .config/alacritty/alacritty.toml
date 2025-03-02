@@ -13,6 +13,11 @@ decorations = "Full"  # macOS
 decorations_theme_variant = "Dark"
 title = "¯\\_(ツ)_/¯"
 
+dimensions.columns = 140
+dimensions.lines = 40
+
+position.y = 80
+
 padding.x = 15
 padding.y = 15
 
