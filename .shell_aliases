@@ -1,4 +1,4 @@
-# Common
+# -- Common --
 alias zshconfig='${EDITOR} ~/.zshrc'
 alias aliases='${EDITOR} ~/.shell_aliases'
 alias bashconfig='${EDITOR} ~/.bashrc'
@@ -10,14 +10,17 @@ alias ll='ls --color -lah'
 alias c='clear'
 alias dotfiles='cd ~/dotfiles'
 
-# MacOS Apps
+# -- Custom git alias to extend from OMZ git plugin. --
+alias ga.='git add .'
+alias gstam='git stash push --message'
+alias gstak='git stash push --keep-index'
+alias gstakm='git stash push --keep-index --message'
+
+# -- MacOS Apps --
 if [[ $(uname) == "Darwin" ]]; then
   alias safari='open /Applications/Safari.app'
   alias zotero='open /Applications/Zotero.app'
 fi
 
-# Change Alacritty theme
+# -- Change Alacritty theme --
 alias alatheme="ls ~/.config/alacritty/themes | fzf --ansi --layout=reverse --border --height 50% | xargs -I {} ln -sf ~/.config/alacritty/themes/{} ~/.config/alacritty/current-theme.toml && echo '@@@' >> ~/.config/alacritty/alacritty.toml && sed '/@@@/d' ~/.config/alacritty/alacritty.toml > ~/.config/alacritty/alacritty.tmp && mv ~/.config/alacritty/alacritty.tmp ~/.config/alacritty/alacritty.toml"
-
-
-RESTART="exec $(basename $SHELL)"
