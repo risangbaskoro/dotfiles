@@ -1,0 +1,118 @@
+#!/bin/bash
+
+set -euo pipefail
+
+usage() {
+    echo "Usage: gitdown <repo-url>"
+    exit 1
+}
+
+[ "$#" -eq 1 ] || usage
+
+URL="$1"
+
+strip_git() {
+    echo "${1%.git}"
+}
+
+download_and_extract() {
+    local url=$1 zipfile=$2 target_dir=$3
+
+    echo "Downloading $url ..."
+    if ! curl -L -o "$zipfile" "$url"; then
+        echo "Download failed"
+        return 1
+    fi
+
+    if ! unzip -tq "$zipfile" &>/dev/null; then
+        echo "Invalid zip file"
+        rm -f "$zipfile"
+        return 2
+    fi
+
+    echo "Unzipping $zipfile ..."
+    unzip -q "$zipfile"
+    rm -f "$zipfile"
+
+    # Find extracted directory (assume first directory extracted)
+    local extracted_dir
+    extracted_dir=$(unzip -Z1 "$zipfile" 2>/dev/null | head -1 | cut -d/ -f1)
+    # fallback: use target_dir-branch pattern
+    if [ ! -d "$extracted_dir" ]; then
+        extracted_dir="${target_dir}-main"
+        [ -d "$extracted_dir" ] || extracted_dir="${target_dir}-master"
+    fi
+
+    if [ -d "$extracted_dir" ]; then
+        if [ -d "$target_dir" ]; then
+            echo "Warning: target directory '$target_dir' already exists."
+        else
+            mv "$extracted_dir" "$target_dir"
+        fi
+        return 0
+    else
+        echo "Could not find extracted directory"
+        return 3
+    fi
+}
+
+parse_url() {
+    local url=$1
+    # Extract host, user, repo
+    if [[ "$url" =~ ^https?://([^/]+)/([^/]+)/([^/]+)(\.git)?$ ]]; then
+        echo "${BASH_REMATCH[1]} ${BASH_REMATCH[2]} ${BASH_REMATCH[3]}"
+    elif [[ "$url" =~ ^([^@]+@)?([^:]+):([^/]+)/([^/]+)(\.git)?$ ]]; then
+        echo "${BASH_REMATCH[2]} ${BASH_REMATCH[3]} ${BASH_REMATCH[4]}"
+    else
+        return 1
+    fi
+}
+
+main() {
+    read -r HOST USER REPO_GIT <<< "$(parse_url "$URL")" || {
+        echo "Invalid repo URL"
+        exit 1
+    }
+
+    REPO=$(strip_git "$REPO_GIT")
+    TARGET_DIR="$REPO"
+
+    case "$HOST" in
+        github.com)
+            BASE_URL="https://github.com/$USER/$REPO"
+            ZIP_PATHS=("archive/refs/heads/main.zip" "archive/refs/heads/master.zip")
+            ;;
+        gitlab.com)
+            BASE_URL="https://gitlab.com/$USER/$REPO/-/archive"
+            ZIP_PATHS=("main/${REPO}-main.zip" "master/${REPO}-master.zip")
+            ;;
+        bitbucket.org)
+            BASE_URL="https://bitbucket.org/$USER/$REPO/get"
+            ZIP_PATHS=("main.zip" "master.zip")
+            ;;
+        codeberg.org)
+            BASE_URL="https://codeberg.org/$USER/$REPO"
+            ZIP_PATHS=("archive/refs/heads/main.zip" "archive/refs/heads/master.zip")
+            ;;
+        *)
+            echo "Unsupported host: $HOST"
+            exit 1
+            ;;
+    esac
+
+    for path in "${ZIP_PATHS[@]}"; do
+        ZIP_URL="$BASE_URL/$path"
+        ZIP_FILE="${REPO}-download.zip"
+        if download_and_extract "$ZIP_URL" "$ZIP_FILE" "$TARGET_DIR"; then
+            echo "Done. Files are in ./$TARGET_DIR"
+            exit 0
+        else
+            echo "Failed to download or extract branch from $ZIP_URL, trying next..."
+        fi
+    done
+
+    echo "Failed to download repository files from $URL"
+    exit 1
+}
+
+main
