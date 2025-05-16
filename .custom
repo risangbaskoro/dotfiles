@@ -1,0 +1,18 @@
+# ~/.custom - Add all executable scripts in ~/bin and subdirs to PATH
+
+BIN_DIRECTORY="$HOME/bin"
+
+# Ensure all files in bin are executable
+if [ -d "$BIN_DIRECTORY" ]; then
+    find "$BIN_DIRECTORY" -type f -exec chmod +x {} +
+
+    while IFS= read -r -d '' script; do
+        dir="$(dirname "$script")"
+        case ":$PATH:" in
+            *":$dir:"*) ;; # already in PATH
+            *) PATH="$dir:$PATH" ;;
+        esac
+    done < <(find "$BIN_DIRECTORY" -type f -perm -u+x -print0)
+fi
+
+export PATH

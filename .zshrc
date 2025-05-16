@@ -123,6 +123,11 @@ if [ -f $HOME/.shell_aliases ]; then
   source $HOME/.shell_aliases
 fi
 
+# Custom Scripts
+if [ -f $HOME/.custom ]; then
+  source $HOME/.custom
+fi
+
 # Shell integrations
 eval "$(fzf --zsh)"
 
@@ -134,6 +139,3 @@ if [[ -f "/usr/local/opt/chruby/share/chruby/auto.sh" ]]; then
   source "/usr/local/opt/chruby/share/chruby/auto.sh"
 fi
 
-# Custom Scripts
-mkdir -p "$HOME/bin"
-export PATH="$HOME/bin:$PATH"
