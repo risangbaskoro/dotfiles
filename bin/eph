@@ -1,0 +1,119 @@
+#!/bin/bash
+
+CONFIG_DIR="$HOME/.config/custom"
+CONFIG_PATH="$CONFIG_DIR/eph.conf"
+EXAMPLE_PATH="$CONFIG_DIR/eph.conf.example"
+
+# Colors
+COLOR_INFO="\033[34m"    # Blue
+COLOR_RUN="\033[35m"     # Magenta
+COLOR_WARN="\033[33m"    # Yellow
+COLOR_ERR="\033[31m"     # Red
+COLOR_RESET="\033[0m"
+
+print_info() { echo -e "${COLOR_INFO}info —${COLOR_RESET} $*"; }
+print_run()  { echo -e "${COLOR_RUN}run  —${COLOR_RESET} $*"; }
+print_warn() { echo -e "${COLOR_WARN}warn —${COLOR_RESET} $*"; }
+print_err()  { echo -e "${COLOR_ERR}err  —${COLOR_RESET} $*"; }
+
+walkthrough_config_setup() {
+    print_info "eph config not found, launching setup..."
+    mkdir -p "$CONFIG_DIR"
+
+    read -p "  Source bucket (e.g. r2:personal): " src
+    read -p "  Destination bucket (e.g. r2:tmp): " dest
+    read -p "  Base URL for public access: " url
+    read -p "  Enable auto-delete using 'at'? (true/false): " auto
+    read -p "  Auto-delete delay in minutes [30]: " delay
+
+    [[ -z "$delay" ]] && delay=30
+
+    cat > "$CONFIG_PATH" <<EOF
+# Source bucket (private). Format: \`remote:bucket\`
+SRC_BUCKET="$src"
+
+# Destination bucket (public, auto-delete). Format: \`remote:bucket\`
+DEST_BUCKET="$dest"
+
+# Base URL for public access
+TMP_URL_BASE="$url"
+
+# Auto-delete (use \`at\` job)
+AUTO_DELETE=$auto
+
+# Auto-delete delay (in minutes)
+DELETE_AFTER_MINS=$delay
+EOF
+
+    print_info "Config saved to $CONFIG_PATH"
+    echo
+}
+
+check_env() {
+    if [[ ! -f "$CONFIG_PATH" ]]; then
+        walkthrough_config_setup
+    fi
+}
+
+cleanup_tmp() {
+    print_info "Cleaning up all files from tmp bucket..."
+    run_cmd="rclone delete \"$DEST_BUCKET\""
+    print_run "$run_cmd"
+    eval "$run_cmd" && print_info "All files deleted from $DEST_BUCKET" || print_err "Failed to clean up $DEST_BUCKET"
+    exit 0
+}
+
+# Show usage if no args
+if [[ $# -eq 0 ]]; then
+    echo "eph - Ephemeral file sharer with auto-expiry"
+    echo
+    echo "Usage:"
+    echo "  eph file1 [file2 ...]     Upload file(s) temporarily"
+    echo "  eph -c | --cleanup        Remove all files in tmp bucket"
+    check_env
+    exit 0
+fi
+
+# Check for cleanup flag
+if [[ "$1" == "-c" || "$1" == "--cleanup" ]]; then
+    check_env
+    source "$CONFIG_PATH"
+    cleanup_tmp
+fi
+
+check_env
+source "$CONFIG_PATH"
+
+# Check dependencies
+if ! command -v rclone >/dev/null; then
+    print_err "rclone not found in PATH"
+    exit 1
+fi
+
+USE_AT=$AUTO_DELETE
+if ! command -v at >/dev/null; then
+    print_warn "'at' not installed — auto-delete disabled"
+    USE_AT=false
+fi
+
+# Loop through files
+for file in "$@"; do
+    [[ -f "$file" ]] || { print_warn "Skipping '$file' (not a file)"; continue; }
+
+    filename=$(basename "$file")
+    print_info "Uploading '$filename'..."
+
+    print_run "rclone copy \"$file\" \"$SRC_BUCKET/\""
+    rclone copy "$file" "$SRC_BUCKET/"
+
+    print_run "rclone copy \"$SRC_BUCKET/$filename\" \"$DEST_BUCKET\""
+    rclone copy "${SRC_BUCKET}/$filename" "${DEST_BUCKET}"
+
+    print_info "$TMP_URL_BASE/$filename"
+
+    if [[ "$USE_AT" != false ]]; then
+        print_run "schedule: rclone delete \"$DEST_BUCKET/$filename\" in $DELETE_AFTER_MINS minutes"
+        echo "rclone delete \"$DEST_BUCKET/$filename\"" | at now + "$DELETE_AFTER_MINS" minutes
+        print_info "Deletion scheduled in $DELETE_AFTER_MINS minutes"
+    fi
+done
