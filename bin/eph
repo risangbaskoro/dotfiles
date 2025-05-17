@@ -148,7 +148,8 @@ for i in "${!FILES[@]}"; do
         rclone moveto "$DEST_BUCKET/$original_name" "$DEST_BUCKET/$final_name"
     fi
 
-    print_info "$TMP_URL_BASE/$final_name"
+    url_encoded_name=$(jq -rn --arg x "$final_name" '$x|@uri')
+    print_info "$TMP_URL_BASE/$url_encoded_name"
 
     if [[ "$USE_AT" != false ]]; then
         print_run "schedule: rclone delete \"$DEST_BUCKET/$final_name\" in $DELETE_AFTER_MINS minutes"
