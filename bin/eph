@@ -63,23 +63,36 @@ cleanup_tmp() {
     exit 0
 }
 
+list_tmp() {
+    print_info "Listing files in tmp bucket:"
+    run_cmd="rclone ls \"$DEST_BUCKET\""
+    print_run "$run_cmd"
+    eval "$run_cmd" || print_err "Failed to list files in $DEST_BUCKET"
+    exit 0
+}
+
 # Show usage if no args
 if [[ $# -eq 0 ]]; then
     echo "eph - Ephemeral file sharer with auto-expiry"
     echo
     echo "Usage:"
-    echo "  eph file1 [file2 ...]                     Upload file(s) temporarily"
-    echo "  eph -f | --filename name1 file1 [...]     Upload file(s) with custom names"
-    echo "  eph -c | --cleanup                        Remove all files in tmp bucket"
+    echo "  eph file1 [file2 ...]                   Upload file(s) temporarily"
+    echo "  eph -f | --filename name1 file1 [...]   Upload file(s) with custom names"
+    echo "  eph -c | --cleanup                      Remove all files in tmp bucket"
+    echo "  eph -l | --list                         List all files in tmp bucket"
     check_env
     exit 0
 fi
 
-# Parse cleanup flag early
+# Parse cleanup or list flag early
 if [[ "$1" == "-c" || "$1" == "--cleanup" ]]; then
     check_env
     source "$CONFIG_PATH"
     cleanup_tmp
+elif [[ "$1" == "-l" || "$1" == "--list" ]]; then
+    check_env
+    source "$CONFIG_PATH"
+    list_tmp
 fi
 
 check_env
@@ -111,6 +124,9 @@ while [[ $# -gt 0 ]]; do
             ;;
         -c|--cleanup)
             cleanup_tmp
+            ;;
+        -l|--list)
+            list_tmp
             ;;
         -* )
             print_err "Unknown option: $1"
@@ -156,4 +172,5 @@ for i in "${!FILES[@]}"; do
         echo "rclone delete \"$DEST_BUCKET/$final_name\"" | at now + "$DELETE_AFTER_MINS" minutes
         print_info "Deletion scheduled in $DELETE_AFTER_MINS minutes"
     fi
+
 done
