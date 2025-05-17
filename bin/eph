@@ -68,13 +68,14 @@ if [[ $# -eq 0 ]]; then
     echo "eph - Ephemeral file sharer with auto-expiry"
     echo
     echo "Usage:"
-    echo "  eph file1 [file2 ...]     Upload file(s) temporarily"
-    echo "  eph -c | --cleanup        Remove all files in tmp bucket"
+    echo "  eph file1 [file2 ...]                     Upload file(s) temporarily"
+    echo "  eph -f | --filename name1 file1 [...]     Upload file(s) with custom names"
+    echo "  eph -c | --cleanup                        Remove all files in tmp bucket"
     check_env
     exit 0
 fi
 
-# Check for cleanup flag
+# Parse cleanup flag early
 if [[ "$1" == "-c" || "$1" == "--cleanup" ]]; then
     check_env
     source "$CONFIG_PATH"
@@ -96,24 +97,62 @@ if ! command -v at >/dev/null; then
     USE_AT=false
 fi
 
-# Loop through files
-for file in "$@"; do
+# Arrays for file list and custom names
+FILES=()
+FILENAMES=()
+pending_name=""
+
+# Parse filenames and options
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -f|--filename)
+            pending_name="$2"
+            shift 2
+            ;;
+        -c|--cleanup)
+            cleanup_tmp
+            ;;
+        -* )
+            print_err "Unknown option: $1"
+            exit 1
+            ;;
+        * )
+            FILES+=("$1")
+            FILENAMES+=("$pending_name")
+            pending_name=""
+            shift
+            ;;
+    esac
+done
+
+# Upload loop
+for i in "${!FILES[@]}"; do
+    file="${FILES[$i]}"
+    custom="${FILENAMES[$i]}"
+
     [[ -f "$file" ]] || { print_warn "Skipping '$file' (not a file)"; continue; }
 
-    filename=$(basename "$file")
-    print_info "Uploading '$filename'..."
+    original_name=$(basename "$file")
+    final_name="${custom:-$original_name}"
+
+    print_info "Uploading '$original_name' as '$final_name'..."
 
     print_run "rclone copy \"$file\" \"$SRC_BUCKET/\""
     rclone copy "$file" "$SRC_BUCKET/"
 
-    print_run "rclone copy \"$SRC_BUCKET/$filename\" \"$DEST_BUCKET\""
-    rclone copy "${SRC_BUCKET}/$filename" "${DEST_BUCKET}"
+    print_run "rclone copy \"$SRC_BUCKET/$original_name\" \"$DEST_BUCKET/\""
+    rclone copy "$SRC_BUCKET/$original_name" "$DEST_BUCKET/"
 
-    print_info "$TMP_URL_BASE/$filename"
+    if [[ "$custom" && "$custom" != "$original_name" ]]; then
+        print_run "rclone moveto \"$DEST_BUCKET/$original_name\" \"$DEST_BUCKET/$final_name\""
+        rclone moveto "$DEST_BUCKET/$original_name" "$DEST_BUCKET/$final_name"
+    fi
+
+    print_info "$TMP_URL_BASE/$final_name"
 
     if [[ "$USE_AT" != false ]]; then
-        print_run "schedule: rclone delete \"$DEST_BUCKET/$filename\" in $DELETE_AFTER_MINS minutes"
-        echo "rclone delete \"$DEST_BUCKET/$filename\"" | at now + "$DELETE_AFTER_MINS" minutes
+        print_run "schedule: rclone delete \"$DEST_BUCKET/$final_name\" in $DELETE_AFTER_MINS minutes"
+        echo "rclone delete \"$DEST_BUCKET/$final_name\"" | at now + "$DELETE_AFTER_MINS" minutes
         print_info "Deletion scheduled in $DELETE_AFTER_MINS minutes"
     fi
 done
