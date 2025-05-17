@@ -79,3 +79,8 @@ fi
 if [ -f $HOME/.shell_aliases ]; then
   source $HOME/.shell_aliases
 fi
+
+# Custom Scripts
+if [ -f $HOME/.custom ]; then
+  source $HOME/.custom
+fi
