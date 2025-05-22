@@ -1,11 +1,18 @@
-# ~/.custom - Add all executable scripts in ~/bin and subdirs to PATH
+# ~/.custom - Add all executable script directories in ~/bin to PATH
 
 BIN_DIRECTORY="$HOME/bin"
 
-# Ensure all files in bin are executable
+# Add ~/bin to PATH if it's not already there
+case ":$PATH:" in
+    *":$BIN_DIRECTORY:"*) ;; # already in PATH
+    *) PATH="$BIN_DIRECTORY:$PATH" ;;
+esac
+
+# Make all files under ~/bin executable
 if [ -d "$BIN_DIRECTORY" ]; then
     find "$BIN_DIRECTORY" -type f -exec chmod +x {} +
 
+    # Add subdirectories containing executables to PATH
     while IFS= read -r -d '' script; do
         dir="$(dirname "$script")"
         case ":$PATH:" in
