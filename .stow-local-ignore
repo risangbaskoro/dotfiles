@@ -8,6 +8,7 @@
 
 # Dotfiles Installation Script
 ^/install.sh
+^/install
 
 # GitHub CLI
 ^/.config/gh

@@ -1,52 +1,72 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
 
 CURRENT_DIR=$(pwd)
 DOTFILES_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-STOW_VERSION="2.4.1"
-STOW_URL="https://ftp.gnu.org/gnu/stow/stow-$STOW_VERSION.tar.gz"
-STOW_TARBALL=$(basename "$STOW_URL")
 
-if ! command -v stow >/dev/null 2>&1; then
-    echo "GNU Stow is not installed. Trying to install..."
-    echo
+is_stow_installed() {
+  command -v stow >/dev/null 2>&1
+}
 
-    # Download stow from GNU's FTP server
-    echo "Downloading GNU Stow..."
-    curl -fsSLO "$STOW_URL"
+install_stow() {
+  echo "🔍 Detecting package manager..."
 
-    echo "Extracting GNU Stow..."
-    # Extract Stow tar and remove the tar
-    tar -xzf "$STOW_TARBALL"
-    
-    # Install Stow
-    echo "Installing GNU Stow..."
-    cd "stow-$STOW_VERSION" && ./configure && make install
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    if command -v brew >/dev/null 2>&1; then
+      echo "🍺 Installing stow via Homebrew..."
+      brew install stow
+      return
+    fi
+  elif command -v apt >/dev/null 2>&1; then
+    echo "🧃 Installing stow via apt..."
+    sudo apt update && sudo apt install -y stow
+  elif command -v dnf >/dev/null 2>&1; then
+    echo "🌶 Installing stow via dnf..."
+    sudo dnf install -y stow
+  elif command -v pacman >/dev/null 2>&1; then
+    echo "🏹 Installing stow via pacman..."
+    sudo pacman -Sy --noconfirm stow
+  elif command -v zypper >/dev/null 2>&1; then
+    echo "🧀 Installing stow via zypper..."
+    sudo zypper install -y stow
+  elif command -v apk >/dev/null 2>&1; then
+    echo "🐋 Installing stow via apk..."
+    sudo apk add stow
+  elif command -v snap >/dev/null 2>&1; then
+    echo "📦 Installing stow via snap..."
+    sudo snap install stow
+  else
+    echo "❌ No supported package manager found. Please install GNU Stow manually."
+    exit 1
+  fi
+}
 
-    echo "Cleanup..."
-    rm "$CURRENT_DIR/$STOW_TARBALL"
-    rm -rf "$CURRENT_DIR/stow-$STOW_VERSION"
+main() {
+  if is_stow_installed; then
+    echo "✅ GNU Stow is already installed."
+  else
+    install_stow
+    echo "✅ GNU Stow has been installed."
+  fi
 
-    echo
-    echo "GNU Stow is installed."
-    echo
-fi
-
-if command -v stow >/dev/null 2>&1; then
-    echo "Symlinking files in $DOTFILES_DIR"
+  if is_stow_installed; then
+    echo "🔗 Symlinking files in $DOTFILES_DIR"
     echo "This will run the following command:"
     echo
     echo "> stow $DOTFILES_DIR --target=$HOME"
-
     cd "$DOTFILES_DIR" && stow . --target="$HOME" && cd
-
     echo
-    echo "Done!"
+    echo "✅ Done!"
     echo
     echo "Restarting shell..."
     echo
     exec $SHELL
-else
+  else
     echo "GNU Stow is still not installed."
     echo
     echo "ABORTING"
-fi
+  fi
+}
+
+main
