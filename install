@@ -1,52 +1,83 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 set -e
 
 CURRENT_DIR=$(pwd)
 DOTFILES_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-is_stow_installed() {
-  command -v stow >/dev/null 2>&1
-}
 
-install_stow() {
-  echo "🔍 Detecting package manager..."
+# Detect and install a package using the right package manager
+install_package() {
+  local pkg="$1"
 
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    if command -v brew >/dev/null 2>&1; then
-      echo "🍺 Installing stow via Homebrew..."
-      brew install stow
-      return
-    fi
-  elif command -v apt >/dev/null 2>&1; then
-    echo "🧃 Installing stow via apt..."
-    sudo apt update && sudo apt install -y stow
-  elif command -v dnf >/dev/null 2>&1; then
-    echo "🌶 Installing stow via dnf..."
-    sudo dnf install -y stow
-  elif command -v pacman >/dev/null 2>&1; then
-    echo "🏹 Installing stow via pacman..."
-    sudo pacman -Sy --noconfirm stow
-  elif command -v zypper >/dev/null 2>&1; then
-    echo "🧀 Installing stow via zypper..."
-    sudo zypper install -y stow
-  elif command -v apk >/dev/null 2>&1; then
-    echo "🐋 Installing stow via apk..."
-    sudo apk add stow
-  elif command -v snap >/dev/null 2>&1; then
-    echo "📦 Installing stow via snap..."
-    sudo snap install stow
+  echo "🔍 Detecting package manager to install '$pkg'..."
+
+  if [[ "$OSTYPE" == "darwin"* ]] && command -v brew &>/dev/null; then
+    echo "🍺 Installing $pkg via Homebrew..."
+    brew install "$pkg"
+  elif command -v pacman &>/dev/null; then
+    echo "🏹 Installing $pkg via pacman..."
+    sudo pacman -Sy --noconfirm "$pkg"
+  elif command -v apk &>/dev/null; then
+    echo "🐋 Installing $pkg via apk..."
+    sudo apk add "$pkg"
+  elif command -v apt &>/dev/null; then
+    echo "🧃 Installing $pkg via apt..."
+    sudo apt install -y "$pkg"
+  elif command -v dnf &>/dev/null; then
+    echo "🌶 Installing $pkg via dnf..."
+    sudo dnf install -y "$pkg"
+  elif command -v zypper &>/dev/null; then
+    echo "🧀 Installing $pkg via zypper..."
+    sudo zypper install -y "$pkg"
+  elif command -v snap &>/dev/null; then
+    echo "📦 Installing $pkg via snap..."
+    sudo snap install "$pkg"
   else
-    echo "❌ No supported package manager found. Please install GNU Stow manually."
+    echo "❌ No supported package manager found. Please install '$pkg' manually."
     exit 1
   fi
+}
+
+# Dependency check with prompt
+dependency() {
+  if command -v "$1" &>/dev/null || pacman -Qi "$1" &>/dev/null; then
+    return 0
+  fi
+
+  read -rp "❓ Dependency '$1' not found. Install it? [Y/n] " choice
+  if [[ "${choice,,}" != "n" ]]; then
+    install_package "$1"
+  else
+    echo "⚠️ Skipping '$1'. Script may not work as expected."
+  fi
+}
+
+if command -v apt &>/dev/null; then
+  echo "🧃 Updating apt..."
+  sudo apt update
+fi
+
+dependency "tree"
+dependency "fzf"
+dependency "stow"
+dependency "git-delta"
+dependency "neovim"
+dependency "ripgrep"
+dependency "gnupg"
+dependency "clang"
+dependency "cmake"
+dependency "just"
+
+is_stow_installed() {
+  command -v stow >/dev/null 2>&1
 }
 
 main() {
   if is_stow_installed; then
     echo "✅ GNU Stow is already installed."
   else
-    install_stow
+    dependency "stow"
     echo "✅ GNU Stow has been installed."
   fi
 
