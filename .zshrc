@@ -129,7 +129,7 @@ if [ -f $HOME/.custom ]; then
 fi
 
 # Shell integrations
-eval "$(fzf --zsh)"
+source <(fzf --zsh)
 
 # Chruby
 if [[ -f "/usr/local/opt/chruby/share/chruby/chruby.sh" ]]; then
