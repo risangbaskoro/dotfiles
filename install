@@ -55,18 +55,15 @@ main() {
     echo "This will run the following command:"
     echo
     echo "> stow $DOTFILES_DIR --target=$HOME"
-    cd "$DOTFILES_DIR" && stow . --target="$HOME" && cd
+    stow "$DOTFILES_DIR" --target="$HOME"
     echo
     echo "✅ Done!"
-    echo
-    echo "Restarting shell..."
-    echo
-    exec $SHELL
   else
-    echo "GNU Stow is still not installed."
-    echo
-    echo "ABORTING"
+    echo "❌ GNU Stow is still not installed."
+    exit 1
   fi
+
+  exit 0
 }
 
 main
