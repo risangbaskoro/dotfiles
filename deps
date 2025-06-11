@@ -55,7 +55,7 @@ fi
 dependency "tree"
 dependency "fzf"
 dependency "stow"
-dependency "delta"
+dependency "git-delta"
 dependency "neovim"
 dependency "ripgrep"
 dependency "gnupg"
