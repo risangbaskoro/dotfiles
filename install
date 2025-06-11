@@ -52,10 +52,10 @@ main() {
 
   if is_stow_installed; then
     echo "🔗 Symlinking files in $DOTFILES_DIR"
-    echo "This will run the following command:"
+    echo "Running command:"
     echo
-    echo "> stow $DOTFILES_DIR --target=$HOME"
-    stow "$DOTFILES_DIR" --target="$HOME"
+    echo "> cd $DOTFILES_DIR && stow . --target=$HOME && cd"
+    cd "$DOTFILES_DIR" && stow . --target="$HOME" && cd
     echo
     echo "✅ Done!"
   else
