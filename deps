@@ -17,7 +17,7 @@ install_package() {
     sudo apk add "$pkg"
   elif command -v apt &>/dev/null; then
     echo "🧃 Installing $pkg via apt..."
-    sudo apt update && sudo apt install -y "$pkg"
+    sudo apt install -y "$pkg"
   elif command -v dnf &>/dev/null; then
     echo "🌶 Installing $pkg via dnf..."
     sudo dnf install -y "$pkg"
@@ -47,6 +47,10 @@ dependency() {
   fi
 }
 
+if command -v apt &>/dev/null; then
+  echo "🧃 Updating apt..."
+  sudo apt update
+fi
 
 dependency "tree"
 dependency "fzf"
