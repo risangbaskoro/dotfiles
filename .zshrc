@@ -26,8 +26,11 @@ fi
 # Source Zinit
 source "${ZINIT_HOME}/zinit.zsh"
 
-# Add Powerlevel10k
-zinit ice depth=1; zinit light romkatv/powerlevel10k
+# Use starship theme
+zinit ice as"command" from"gh-r" \
+          atclone"./starship init zsh > init.zsh; ./starship completions zsh > _starship" \
+          atpull"%atclone" src"init.zsh"
+zinit light starship/starship
 
 # Source Powerlevel10k
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
