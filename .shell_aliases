@@ -9,6 +9,7 @@ alias ls='ls --color'
 alias ll='ls --color -lah'
 alias c='clear'
 alias dotfiles='cd ~/dotfiles'
+alias ar='php artisan'
 
 # -- Custom git alias to extend from OMZ git plugin. --
 alias ga.='git add .'
