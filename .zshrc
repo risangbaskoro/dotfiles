@@ -142,3 +142,6 @@ if [[ -f "/usr/local/opt/chruby/share/chruby/auto.sh" ]]; then
   source "/usr/local/opt/chruby/share/chruby/auto.sh"
 fi
 
+# TODO: Conditional load please.
+# PostgreSQL
+export PATH="/usr/local/opt/postgresql@17/bin:$PATH"
