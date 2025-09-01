@@ -145,3 +145,7 @@ fi
 # TODO: Conditional load please.
 # PostgreSQL
 export PATH="/usr/local/opt/postgresql@17/bin:$PATH"
+
+# TODO: Conditional load please.
+# Spicetify
+export PATH=$PATH:/Users/risangbaskoro/.spicetify
