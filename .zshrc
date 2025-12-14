@@ -143,9 +143,22 @@ if [[ -f "/usr/local/opt/chruby/share/chruby/auto.sh" ]]; then
 fi
 
 # TODO: Conditional load please.
+# Or move to .local/bin/env?
+
 # PostgreSQL
 export PATH="/usr/local/opt/postgresql@17/bin:$PATH"
 
-# TODO: Conditional load please.
 # Spicetify
 export PATH=$PATH:/Users/risangbaskoro/.spicetify
+
+# OPENJDK
+export PATH="/usr/local/opt/openjdk@21/bin:$PATH"
+
+# Composer
+export PATH="$HOME/.composer/vendor/bin:$PATH"
+
+# Zoxide
+eval "$(zoxide init zsh)"
+
+# TODO: Generalize with other shell (bash)
+. "$HOME/.local/bin/env"

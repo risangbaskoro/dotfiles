@@ -84,3 +84,6 @@ fi
 if [ -f $HOME/.custom ]; then
   source $HOME/.custom
 fi
+
+# TODO: Generalize with other shell (zsh)
+. "$HOME/.local/bin/env"
